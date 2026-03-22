@@ -1,0 +1,62 @@
+第一步
+入门指南
+目标：以最少的设置，从零开始到完成第一次可用聊天。
+最快的聊天方式：打开 Control UI（无需设置渠道）。运行 openclaw dashboard 并在浏览器中聊天，或在 网关主机 上打开 http://127.0.0.1:18789/。 文档：Dashboard 和 Control UI。
+​
+前置条件
+推荐使用 Node 24（Node 22 LTS，目前为 22.16+，仍因兼容性而受支持）
+如果你不确定，请使用 node --version 检查你的 Node 版本。
+​
+快速设置（CLI）
+1
+安装 OpenClaw（推荐）
+
+macOS/Linux
+Windows（PowerShell）
+curl -fsSL https://openclaw.ai/install.sh | bash
+安装脚本流程
+其他安装方式和要求： Install。
+2
+运行新手引导
+
+openclaw onboard --install-daemon
+新手引导会配置认证、Gateway 网关设置和可选渠道。 详情请参见 CLI 新手引导。
+3
+检查 Gateway 网关
+
+如果你已安装服务，它应该已经在运行：
+openclaw gateway status
+4
+打开 Control UI
+
+openclaw dashboard
+如果 Control UI 能加载，你的 Gateway 网关就已准备就绪，可以使用。
+​
+可选检查和附加内容
+在前台运行 Gateway 网关
+
+发送一条测试消息
+
+​
+常用环境变量
+如果你将 OpenClaw 作为服务账户运行，或想使用自定义配置/状态位置：
+OPENCLAW_HOME 设置用于内部路径解析的主目录。
+OPENCLAW_STATE_DIR 覆盖状态目录。
+OPENCLAW_CONFIG_PATH 覆盖配置文件路径。
+完整的环境变量参考： 环境变量。
+​
+深入了解
+CLI 新手引导
+完整的 CLI 新手引导参考和高级选项。
+macOS 应用新手引导
+macOS 应用的首次运行流程。
+​
+你将获得什么
+一个正在运行的 Gateway 网关
+已配置好的认证
+Control UI 访问权限或一个已连接的渠道
+​
+后续步骤
+私信安全和批准：Pairing
+连接更多渠道：Channels
+高级工作流和源码安装：Setup
