@@ -1,6 +1,0 @@
-# 创建项目文件夹
-mkdir openclaw-support && cd openclaw-support
-# 初始化npm
-npm init -y
-# 安装依赖
-npm install express cors body-parser fs-extra
