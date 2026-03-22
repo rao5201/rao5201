@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支持我 - OpenClaw 实战分享</title>
+    <style>
+        :root {
+            --primary-color: #29abe0; /* Ko-fi 蓝色 */
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-secondary: #666666;
+            --btn-hover: #1c8dbd;
+            --ad-border: #ff9800; 
+            --ad-bg: #fff8e1;     
+            --secret-bg: #2c3e50; 
+            --secret-text: #00ff00; 
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-left: 80px; 
+            padding-right: 80px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* --- 个人资料卡片 --- */
+        .profile-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            margin-bottom: 15px;
+            background-color: #eee;
+        }
+
+        .username {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .bio {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .support-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 6px rgba(41, 171, 224, 0.3);
+        }
+
+        .support-btn:hover {
+            background-color: var(--btn-hover);
+            transform: translateY(-2px);
+        }
+
+        /* --- 目标进度条 --- */
+        .goal-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .goal-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar-bg {
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            height: 20px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            background-color: var(--primary-color);
+            height: 100%;
+            width: 0.1%; 
+            border-radius: 10px;
+            text-align: right;
+            padding-right: 10px;
+            color: white;
+            font-size: 12px;
+            line-height: 20px;
+            min-width: 2%;
+            transition: width 1s ease-in-out;
+        }
+
+        /* --- 帖子列表 --- */
+        .posts-section {
+            margin-top: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 5px solid transparent;
+        }
+
+        .post-card.public {
+            border-left-color: var(--primary-color);
+        }
+
+        .post-date { font-size: 12px; color: #999; margin-bottom: 5px; }
+        .post-title { font-weight: bold; font-size: 18px; margin-bottom: 10px; }
+        .post-content { color: var(--text-secondary); font-size: 15px; }
+
+        /* --- 新增：项目展示板块 (my-photo.jpg) --- */
+        .project-showcase {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .project-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .project-image-container {
+            margin: 20px 0;
+            position: relative;
+            display: inline-block;
+        }
+
+        .project-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: block;
+        }
+
+        .project-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+        }
+
+        .project-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .project-btn {
+            background-color: #333;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+            display: inline-block;
+        }
+
+        .project-btn:hover {
+            background-color: #000;
+        }
+
+        /* --- 密文区域 --- */
+        .secret-section {
+            margin-top: 40px;
+            background-color: var(--secret-bg);
+            color: var(--secret-text);
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid #444;
+        }
+
+        .secret-title {
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px dashed #666;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .secret-line {
+            margin: 10px 0;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .secret-label {
+            color: #aaa;
+            margin-right: 10px;
+        }
+
+        /* --- 底部广告位 --- */
+        .ads-footer-section {
+            margin-top: 50px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+        }
+
+        .ads-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--ad-border);
+        }
+
+        .ads-contact {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .ads-contact a {
+            color: var(--primary-color);
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .ads-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 强制每行5个，共两行10个 */
+            gap: 15px;
+        }
+
+        .ad-slot {
+            background-color: var(--ad-bg);
+            border: 2px dashed var(--ad-border);
+            border-radius: 8px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 12px;
+            color: #d35400;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ad-slot:hover {
+            background-color: #ffe0b2;
+            transform: scale(1.05);
+        }
+
+        /* --- 左右悬浮广告 --- */
+        .floating-ad {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 200px;
+            background-color: var(--ad-bg);
+            border: 2px solid var(--ad-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 14px;
+            font-weight: bold;
+            color: #d35400;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .floating-ad:hover {
+            background-color: #ffe0b2;
+            width: 70px;
+        }
+
+        .ad-left { left: 10px; }
+        .ad-right { right: 10px; }
+
+        /* 广告招商表单 */
+        .ad-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .ad-form.active { display: block; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .submit-btn:hover { background: var(--btn-hover); }
+
+        /* 解密输入框 */
+        .decrypt-input {
+            margin: 15px 0;
+            padding: 8px;
+            border: 1px solid #444;
+            background: #34495e;
+            color: var(--secret-text);
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .decrypt-btn {
+            background: #00ff00;
+            color: #2c3e50;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #999;
+            font-size: 14px;
+            padding-bottom: 20px;
+        }
+
+        /* --- 移动端适配 --- */
+        @media (max-width: 900px) {
+            body {
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .floating-ad {
+                display: none;
+            }
+            .ads-grid {
+                grid-template-columns: repeat(2, 1fr); /* 手机端每行2个 */
+            }
+            .project-showcase {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .ads-grid {
+                grid-template-columns: 1fr; /* 小手机每行1个 */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 左侧悬浮广告 -->
+<div class="floating-ad ad-left" onclick="showAdForm()">
+    广告位招商<br>联系站长
+</div>
+
+<!-- 右侧悬浮广告 -->
+<div class="floating-ad ad-right" onclick="showAdForm()">
+    黄金展位<br>虚位以待
+</div>
+
+<div class="container">
+    <!-- 个人简介区域 -->
+    <div class="profile-card">
+        <img src="logo.jpg" alt="用户头像" class="avatar">
+        <h1 class="username">OpenClaw 实战分享 茶海虾王</h1>
+        <p class="bio">欢迎来到我的主页！这里是我的创作空间。</p>
+        <p class="bio">专注于 OpenClaw 实战分享与技术开发。</p>
+        <p class="bio">如果你喜欢我的作品，欢迎请我喝杯咖啡支持我！☕</p>
+
+        <a href="#" class="support-btn" onclick="donateModal()">请我喝杯咖啡 ☕</a>
+    </div>
+
+    <!-- 目标进度区域 -->
+    <div class="goal-section">
+        <div class="goal-title">
+            <span>🎯 月度服务器维护基金</span>
+            <span id="goal-amount">¥10 / ¥10000</span>
+        </div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-bar">0.1%</div>
+        </div>
+        <p style="font-size: 13px; color: #666; margin-top: 10px;">万里长征第一步，感谢大家的支持！</p>
+    </div>
+
+    <!-- 动态/帖子区域 -->
+    <div class="posts-section">
+        <h3 style="margin-bottom: 15px;">最新动态</h3>
+        <div id="posts-list">
+            <!-- 动态由JS加载 -->
+        </div>
+    </div>
+
+    <!-- 项目展示板块 -->
+    <div class="project-showcase">
+        <div class="project-title">🦀 OpenClaw 实战分享</div>
+        <p class="project-desc">
+            这是我最新的技术分享项目！涵盖从基础到进阶的实战案例，带你深入理解爬虫技术与数据处理。
+            点击下方按钮查看详细内容或获取源码。
+        </p>
+        
+        <div class="project-image-container">
+            <img src="my-photo.jpg" alt="OpenClaw 实战分享封面" class="project-image">
+        </div>
+
+        <a href="#" class="project-btn">查看详情 / 获取源码</a>
+    </div>
+
+    <!-- 密文区域 -->
+    <div class="secret-section">
+        <div class="secret-title">🔒 加密信息：收取小费通道</div>
+        <input type="text" class="decrypt-input" id="decrypt-key" placeholder="输入解密密钥（赞助后获取）">
+        <button class="decrypt-btn" onclick="decryptSecret()">解密信息</button>
+        <div class="secret-content">
+            <div class="secret-line">
+                <span class="secret-label">银行账号:</span>
+                <span id="bank-account">？？？？？？？？？*****</span>
+            </div>
+            <div class="secret-line">
+                <span class="secret-label">银行名称:</span>
+                <span id="bank-name">~！~！~！~！</span>
+            </div>
+            <div class="secret-line">
+                <span class="secret-label">支行名称:</span>
+                <span id="bank-branch">~！~！~！~</span>
+            </div>
+            <div class="secret-line">
+                <span class="secret-label">账号姓名:</span>
+                <span id="bank-username">！~！~！~！</span>
+            </div>
+        </div>
+        <div style="margin-top: 15px; font-size: 12px; color: #666;">
+            * 请联系站长获取解密钥匙或直接通过上方按钮赞助。
+        </div>
+    </div>
+
+    <!-- 底部广告位区域 -->
+    <div class="ads-footer-section">
+        <div class="ads-title">📢 广告位火热招商中</div>
+        <div class="ads-contact">
+            如有意向投放广告，请联系：<a href="mailto:rao5201@126.com">rao5201@126.com</a> 或填写下方表单
+        </div>
+        <!-- 广告招商表单 -->
+        <div class="ad-form" id="ad-form">
+            <div class="form-group">
+                <label>联系人</label>
+                <input type="text" id="contact-name" placeholder="请输入您的姓名">
+            </div>
+            <div class="form-group">
+                <label>联系电话</label>
+                <input type="tel" id="contact-phone" placeholder="请输入您的手机号">
+            </div>
+            <div class="form-group">
+                <label>广告位编号</label>
+                <input type="text" id="ad-slot" placeholder="例如：01">
+            </div>
+            <div class="form-group">
+                <label>需求描述</label>
+                <textarea id="ad-desc" rows="3" placeholder="请描述您的广告需求"></textarea>
+            </div>
+            <button class="submit-btn" onclick="submitAdForm()">提交</button>
+        </div>
+        <div class="ads-grid">
+            <div class="ad-slot" onclick="fillAdSlot('01')">广告位 01<br>招租</div>
+            <div class="ad-slot" onclick="fillAdSlot('02')">广告位 02<br>招租</div>
+            <div class="ad-slot" onclick="fillAdSlot('03')">广告位 03<br>招租</div>
+            <div class="ad-slot" onclick="fillAdSlot('04')">广告位 04<br>招租</div>
+            <div class="ad-slot" onclick="fillAdSlot('05')">广告位 05<br>招租</div>
+            <div class="ad-slot" onclick="fillAdSlot('06')">广告位 06<br>招租</div>
+            <div class="ad-slot" onclick="fillAdSlot('07')">广告位 07<br>招租</div>
+            <div class="ad-slot" onclick="fillAdSlot('08')">广告位 08<br>招租</div>
+            <div class="ad-slot" onclick="fillAdSlot('09')">广告位 09<br>招租</div>
+            <div class="ad-slot" onclick="fillAdSlot('10')">广告位 10<br>招租</div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 rao5201. Powered by GitHub Pages & Node.js.</p>
+        <p id="visit-count">访问量：0</p>
+    </footer>
+</div>
+
+<script>
+    // 后端接口基础地址
+    const API_BASE = 'http://localhost:3000/api';
+
+    // 页面加载时初始化数据
+    window.onload = async function() {
+        await loadGoalProgress(); // 加载进度条
+        await loadPosts(); // 加载帖子
+        await loadVisitCount(); // 加载访问量
+    };
+
+    // 1. 加载赞助进度
+    async function loadGoalProgress() {
+        try {
+            const res = await fetch(`${API_BASE}/goal`);
+            const data = await res.json();
+            const progress = (data.current / data.target) * 100;
+            // 更新DOM
+            document.getElementById('goal-amount').textContent = `¥${data.current} / ¥${data.target}`;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-bar').textContent = `${progress.toFixed(1)}%`;
+        } catch (err) {
+            console.error('加载进度失败:', err);
+        }
+    }
+
+    // 2. 加载帖子列表
+    async function loadPosts() {
+        try {
+            const res = await fetch(`${API_BASE}/posts`);
+            const posts = await res.json();
+            const postsList = document.getElementById('posts-list');
+            // 清空原有内容
+            postsList.innerHTML = '';
+            // 渲染帖子
+            posts.forEach(post => {
+                const postCard = document.createElement('div');
+                postCard.className = `post-card ${post.type}`;
+                postCard.innerHTML = `
+                    <div class="post-date">${post.date}</div>
+                    <div class="post-title">${post.title}</div>
+                    <div class="post-content">${post.content}</div>
+                `;
+                postsList.appendChild(postCard);
+            });
+        } catch (err) {
+            console.error('加载帖子失败:', err);
+            document.getElementById('posts-list').innerHTML = '<div style="text-align:center; color:#999;">加载动态失败，请稍后重试</div>';
+        }
+    }
+
+    // 3. 加载访问量
+    async function loadVisitCount() {
+        try {
+            const res = await fetch(`${API_BASE}/visit-count`);
+            const data = await res.json();
+            document.getElementById('visit-count').textContent = `访问量：${data.count}`;
+        } catch (err) {
+            console.error('加载访问量失败:', err);
+        }
+    }
+
+    // 4. 解密私密信息
+    function decryptSecret() {
+        const key = document.getElementById('decrypt-key').value.trim();
+        // 模拟密钥验证（实际需后端校验）
+        if (key === 'rao5201-2026') { // 测试密钥
+            document.getElementById('bank-account').textContent = '622208 1234 5678 9010';
+            document.getElementById('bank-name').textContent = '中国工商银行';
+            document.getElementById('bank-branch').textContent = '北京市朝阳区支行';
+            document.getElementById('bank-username').textContent = '饶先生';
+            alert('解密成功！');
+        } else {
+            alert('密钥错误，请联系站长获取正确密钥');
+        }
+    }
+
+    // 5. 显示广告招商表单
+    function showAdForm() {
+        document.getElementById('ad-form').classList.add('active');
+        // 滚动到表单位置
+        document.getElementById('ad-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // 6. 填充广告位编号
+    function fillAdSlot(slot) {
+        document.getElementById('ad-slot').value = slot;
+        showAdForm();
+    }
+
+    // 7. 提交广告表单
+    async function submitAdForm() {
+        const name = document.getElementById('contact-name').value.trim();
+        const phone = document.getElementById('contact-phone').value.trim();
+        const slot = document.getElementById('ad-slot').value.trim();
+        const desc = document.getElementById('ad-desc').value.trim();
+
+        // 简单验证
+        if (!name || !phone || !slot) {
+            alert('请填写联系人、电话、广告位编号！');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}/ad-form`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, phone, slot, desc }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('提交成功！站长会尽快联系您');
+                // 清空表单
+                document.getElementById('contact-name').value = '';
+                document.getElementById('contact-phone').value = '';
+                document.getElementById('ad-slot').value = '';
+                document.getElementById('ad-desc').value = '';
+            } else {
+                alert('提交失败：' + data.message);
+            }
+        } catch (err) {
+            console.error('提交表单失败:', err);
+            alert('提交失败，请稍后重试');
+        }
+    }
+
+    // 8. 赞助弹窗（模拟）
+    function donateModal() {
+        alert('跳转到赞助页面（微信/支付宝/银行卡）');
+        // 实际可跳转至支付页面，或调用支付接口
+    }
+</script>
+
+</body>
+</html>
