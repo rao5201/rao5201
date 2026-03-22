@@ -135,6 +135,13 @@
             margin-bottom: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             border-left: 5px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .post-card:hover {
+            transform: translateX(5px);
+            border-left-color: var(--primary-color);
         }
 
         .post-card.public {
@@ -144,6 +151,19 @@
         .post-date { font-size: 12px; color: #999; margin-bottom: 5px; }
         .post-title { font-weight: bold; font-size: 18px; margin-bottom: 10px; }
         .post-content { color: var(--text-secondary); font-size: 15px; }
+
+        /* 文章内容展示区域 */
+        .article-content {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            line-height: 1.9;
+            font-size: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
 
         .project-showcase {
             background: var(--card-bg);
@@ -421,6 +441,7 @@
         <p class="bio">欢迎来到我的主页！这里是我的创作空间。</p>
         <p class="bio">专注于 OpenClaw 实战分享与技术开发。</p>
         <p class="bio">如果你喜欢我的作品，欢迎请我喝杯咖啡支持我！☕</p>
+
         <a href="#" class="support-btn" onclick="donateModal()">请我喝杯咖啡 ☕</a>
     </div>
 
@@ -435,9 +456,11 @@
         <p style="font-size: 13px; color: #666; margin-top: 10px;">万里长征第一步，感谢大家的支持！</p>
     </div>
 
+    <!-- 文章列表区域 -->
     <div class="posts-section">
-        <h3 style="margin-bottom: 15px;">最新动态</h3>
+        <h3 style="margin-bottom: 15px;">📝 技术文章（点击阅读全文）</h3>
         <div id="posts-list"></div>
+        <div id="article-content" class="article-content"></div>
     </div>
 
     <div class="project-showcase">
@@ -519,16 +542,50 @@
 
     <footer>
         <p>© 2026 rao5201. Powered by GitHub Pages.</p>
-        <p id="visit-count">访问量：0</p>
+        <p id="visit-count">访问量：288</p>
     </footer>
 </div>
 
 <script>
     window.onload = function() {
         loadGoalProgress();
-        loadPosts();
+        loadArticles();
         loadVisitCount();
     };
+
+    // ==============================================
+    // 🔥 自动读取 articles 文件夹里的文章
+    // ==============================================
+    async function loadArticles() {
+        const list = document.getElementById("posts-list");
+        const contentBox = document.getElementById("article-content");
+
+        // 在这里添加你的 TXT 文章文件名
+        const articleFiles = [
+            "01.txt",
+            "02.txt",
+            "03.txt",
+            "OpenClaw入门教程.txt"
+        ];
+
+        for (let file of articleFiles) {
+            let card = document.createElement("div");
+            card.className = "post-card public";
+            card.innerHTML = `
+                <div class="post-date">技术文章</div>
+                <div class="post-title">📄 ${file.replace('.txt', '')}</div>
+                <div class="post-content">点击查看全文</div>
+            `;
+            card.onclick = async () => {
+                let res = await fetch(`articles/${file}`);
+                let text = await res.text();
+                contentBox.innerText = text;
+                contentBox.style.display = "block";
+                contentBox.scrollIntoView({ behavior: "smooth" });
+            };
+            list.appendChild(card);
+        }
+    }
 
     function loadGoalProgress() {
         const data = { current: 10, target: 10000 };
@@ -536,34 +593,6 @@
         document.getElementById('goal-amount').textContent = `¥${data.current} / ¥${data.target}`;
         document.getElementById('progress-bar').style.width = `${progress}%`;
         document.getElementById('progress-bar').textContent = `${progress.toFixed(1)}%`;
-    }
-
-    function loadPosts() {
-        const posts = [
-            {
-                type: 'public',
-                date: '2 小时前',
-                title: '新项目上线啦！🚀',
-                content: '大家好，我刚刚在 GitHub 上更新了新的代码库。这是一个关于网页解析的小工具，欢迎大家 Star 和 Fork！'
-            },
-            {
-                type: 'public',
-                date: '昨天',
-                title: '网站搭建完成 ❤️',
-                content: '我的个人主页终于上线了！专注 OpenClaw 实战分享，持续更新中。'
-            }
-        ];
-        const list = document.getElementById('posts-list');
-        posts.forEach(post => {
-            const div = document.createElement('div');
-            div.className = 'post-card public';
-            div.innerHTML = `
-                <div class="post-date">${post.date}</div>
-                <div class="post-title">${post.title}</div>
-                <div class="post-content">${post.content}</div>
-            `;
-            list.appendChild(div);
-        });
     }
 
     function loadVisitCount() {
