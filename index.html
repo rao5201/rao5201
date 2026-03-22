@@ -152,7 +152,7 @@
         .post-title { font-weight: bold; font-size: 18px; margin-bottom: 10px; }
         .post-content { color: var(--text-secondary); font-size: 15px; }
 
-        /* 文章内容展示区域 */
+        /* 全能预览区域 */
         .article-content {
             background: #fff;
             padding: 25px;
@@ -163,6 +163,36 @@
             font-size: 15px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             display: none;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .article-content video,
+        .article-content audio {
+            width: 100%;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .article-content iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 8px;
+        }
+        .article-content .download-link {
+            display: inline-block;
+            background: var(--primary-color);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 15px;
         }
 
         .project-showcase {
@@ -423,6 +453,11 @@
             }
         }
     </style>
+
+    <!-- 🔥 全能格式依赖库：Word + PDF -->
+    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
+    <script src="https://unpkg.com/docxtemplater@3.37.12/build/docxtemplater.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
 </head>
 <body>
 
@@ -441,7 +476,6 @@
         <p class="bio">欢迎来到我的主页！这里是我的创作空间。</p>
         <p class="bio">专注于 OpenClaw 实战分享与技术开发。</p>
         <p class="bio">如果你喜欢我的作品，欢迎请我喝杯咖啡支持我！☕</p>
-
         <a href="#" class="support-btn" onclick="donateModal()">请我喝杯咖啡 ☕</a>
     </div>
 
@@ -458,7 +492,7 @@
 
     <!-- 文章列表区域 -->
     <div class="posts-section">
-        <h3 style="margin-bottom: 15px;">📝 技术文章（点击阅读全文）</h3>
+        <h3 style="margin-bottom: 15px;">📁 全部文件（全能预览）</h3>
         <div id="posts-list"></div>
         <div id="article-content" class="article-content"></div>
     </div>
@@ -545,52 +579,105 @@
         <p id="visit-count">访问量：288</p>
     </footer>
 </div>
+
 <script>
     window.onload = function() {
         loadGoalProgress();
-        loadArticles(); // 改为加载文章列表
+        loadArticles();
         loadVisitCount();
     };
 
     // ==============================================
-    // 🔥 自动读取 articles 文件夹里的文章（适配你的文件名）
+    // 🔥 终极全能文件预览：支持所有格式
     // ==============================================
     async function loadArticles() {
         const list = document.getElementById("posts-list");
         const contentBox = document.getElementById("article-content");
 
-        // 这里是你上传的 4 篇文章，直接用！
+        // 在这里添加你上传的所有文件
         const articleFiles = [
             "01.OpenClaw介绍.txt",
             "02.第一步入门指南.txt",
             "03.第一步CLI 新手引导.txt",
-            "04.第一步新手引导.txt"
+            "04.第一步新手引导.txt",
+            "教程.docx",
+            "案例.pdf",
+            "演示.jpg",
+            "演示.png",
+            "视频.mp4",
+            "音频.mp3",
+            "资料.zip",
+            "资料.rar"
         ];
 
         for (let file of articleFiles) {
             let card = document.createElement("div");
             card.className = "post-card public";
             card.innerHTML = `
-                <div class="post-date">技术文章</div>
-                <div class="post-title">📄 ${file.replace('.txt', '')}</div>
-                <div class="post-content">点击查看全文</div>
+                <div class="post-date">支持在线预览</div>
+                <div class="post-title">📄 ${file}</div>
+                <div class="post-content">点击打开</div>
             `;
-            card.onclick = async () => {
-                try {
-                    let res = await fetch(`articles/${file}`);
-                    let text = await res.text();
-                    contentBox.innerText = text;
-                    contentBox.style.display = "block";
-                    contentBox.scrollIntoView({ behavior: "smooth" });
-                } catch (e) {
-                    contentBox.innerText = "文章加载失败，请检查文件名是否正确";
-                    contentBox.style.display = "block";
-                }
-            };
+            card.onclick = () => openFile(file);
             list.appendChild(card);
         }
     }
 
+    async function openFile(file) {
+        const box = document.getElementById("article-content");
+        const url = `articles/${file}`;
+        box.style.display = "block";
+        box.innerHTML = "加载中...";
+
+        try {
+            // 纯文本
+            if (file.match(/\.(txt|md|json|js|css|html|xml|csv)$/)) {
+                let r = await fetch(url);
+                box.innerText = await r.text();
+            }
+            // Word文档
+            else if (file.endsWith(".docx")) {
+                PizZipUtils.getBinaryContent(url, (err, content) => {
+                    if (err) throw err;
+                    const zip = new PizZip(content);
+                    const doc = new docxtemplater().loadZip(zip);
+                    box.innerText = doc.getFullText();
+                });
+            }
+            // 图片
+            else if (file.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
+                box.innerHTML = `<img src="${url}" alt="${file}">`;
+            }
+            // 视频
+            else if (file.match(/\.(mp4|mov|webm|ogg)$/)) {
+                box.innerHTML = `<video controls src="${url}"></video>`;
+            }
+            // 音频
+            else if (file.match(/\.(mp3|wav|ogg|m4a)$/)) {
+                box.innerHTML = `<audio controls src="${url}"></audio>`;
+            }
+            // PDF
+            else if (file.endsWith(".pdf")) {
+                box.innerHTML = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(window.location.origin + url)}&embedded=true"></iframe>`;
+            }
+            // 压缩包 + 其他所有格式 → 下载
+            else {
+                box.innerHTML = `
+                    <p>文件：${file}</p>
+                    <p>格式不支持在线预览，可直接下载</p>
+                    <a class="download-link" href="${url}" download="${file}">📥 点击下载文件</a>
+                `;
+            }
+        } catch (e) {
+            box.innerText = "加载失败：" + e.message;
+        }
+
+        box.scrollIntoView({ behavior: "smooth" });
+    }
+
+    // ==============================================
+    // 原有功能
+    // ==============================================
     function loadGoalProgress() {
         const data = { current: 10, target: 10000 };
         const progress = (data.current / data.target) * 100;
@@ -599,8 +686,12 @@
         document.getElementById('progress-bar').textContent = `${progress.toFixed(1)}%`;
     }
 
-    function loadVisitCount() {
-        document.getElementById('visit-count').textContent = "访问量：288";
+   function loadVisitCount() {
+    // 本地存储自动计数，每次访问 +1
+    let count = localStorage.getItem('visitCount') || 0;
+    count = parseInt(count) + 1;
+    localStorage.setItem('visitCount', count);
+    document.getElementById('visit-count').textContent = "访问量：" + count;
     }
 
     function decryptSecret() {
