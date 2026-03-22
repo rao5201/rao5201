@@ -545,27 +545,26 @@
         <p id="visit-count">访问量：288</p>
     </footer>
 </div>
-
 <script>
     window.onload = function() {
         loadGoalProgress();
-        loadArticles();
+        loadArticles(); // 改为加载文章列表
         loadVisitCount();
     };
 
     // ==============================================
-    // 🔥 自动读取 articles 文件夹里的文章
+    // 🔥 自动读取 articles 文件夹里的文章（适配你的文件名）
     // ==============================================
     async function loadArticles() {
         const list = document.getElementById("posts-list");
         const contentBox = document.getElementById("article-content");
 
-        // 在这里添加你的 TXT 文章文件名
+        // 这里是你上传的 4 篇文章，直接用！
         const articleFiles = [
-            "01.txt",
-            "02.txt",
-            "03.txt",
-            "OpenClaw入门教程.txt"
+            "01.OpenClaw介绍.txt",
+            "02.第一步入门指南.txt",
+            "03.第一步CLI 新手引导.txt",
+            "04.第一步新手引导.txt"
         ];
 
         for (let file of articleFiles) {
@@ -577,11 +576,16 @@
                 <div class="post-content">点击查看全文</div>
             `;
             card.onclick = async () => {
-                let res = await fetch(`articles/${file}`);
-                let text = await res.text();
-                contentBox.innerText = text;
-                contentBox.style.display = "block";
-                contentBox.scrollIntoView({ behavior: "smooth" });
+                try {
+                    let res = await fetch(`articles/${file}`);
+                    let text = await res.text();
+                    contentBox.innerText = text;
+                    contentBox.style.display = "block";
+                    contentBox.scrollIntoView({ behavior: "smooth" });
+                } catch (e) {
+                    contentBox.innerText = "文章加载失败，请检查文件名是否正确";
+                    contentBox.style.display = "block";
+                }
             };
             list.appendChild(card);
         }
